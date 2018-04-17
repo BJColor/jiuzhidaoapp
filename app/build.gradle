@@ -1,0 +1,192 @@
+apply plugin: 'com.android.application'
+
+
+int minSdk = var.minSdkVersion
+int targetSdk = var.targetSdkVersion
+String appId = var.applicationId
+int vCode = 1
+def nation_num = '0000'
+def community_num = '0001'
+
+android {
+
+    compileSdkVersion targetSdk
+    buildToolsVersion var.buildToolsVersion
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+
+    //DSL element 'DexOptions.incremental' is obsolete and will be removed at the end of 2018
+//    dexOptions {
+//        incremental true
+//        javaMaxHeapSize "4g"
+//    }
+    lintOptions {
+        // true--错误发生后停止gradle构建
+        abortOnError false
+        //  true--所有正式版构建执行规则生成崩溃的lint检查，如果有崩溃问题将停止构建
+        checkReleaseBuilds false
+    }
+
+    dataBinding {
+        enabled true
+    }
+
+
+    defaultConfig {
+        applicationId appId
+        minSdkVersion minSdk
+        targetSdkVersion targetSdk
+        versionCode vCode
+        versionName "jiuzhidao"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
+
+        multiDexEnabled true
+        renderscriptTargetApi minSdk
+        renderscriptSupportModeEnabled true
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("../firebox_keystore.jks")
+            keyAlias 'haier'
+            keyPassword 'android'
+            storePassword 'android'
+        }
+
+    }
+
+
+    buildTypes {
+
+        release {
+            //是否启用混淆
+            minifyEnabled true
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //是否清理无用资源（将删除所有那些在项目中不会使用的资源）
+//            shrinkResources true
+            //是否启用zipAlign压缩
+            zipAlignEnabled true
+            signingConfig signingConfigs.debug
+
+        }
+    }
+
+    //构建多版本
+    flavorDimensions "keep", "change"
+    productFlavors {
+//        公共的区域
+        banben {
+            dimension "keep"
+            minSdkVersion minSdk
+            applicationId appId
+            targetSdkVersion targetSdk
+            versionCode vCode
+
+            ndk {
+                moduleName "native-modbus-jni,libxmediaplayer"
+                ldLibs "log", "z", "m", "android", "c"
+                abiFilters "armeabi", "armeabi-v7a", "x86"
+
+                // 指定要ndk需要兼容的架构(这样其他依赖包里mips,armeabi,arm-v8之类的so会被过滤掉)
+            }
+            sourceSets.main {
+                jni.srcDirs = []
+                jniLibs.srcDirs = ['libs']
+                jniLibs.srcDir 'src/main/libs'
+            }
+            // Enabling multidex support.
+            multiDexEnabled true
+            vectorDrawables.useSupportLibrary = true
+            signingConfig signingConfigs.debug
+        }
+
+
+        BXN_NATION {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXN_NATION_" + vCode + "_" + nation_num
+        }
+        BXNT_NATION {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXNT_NATION_" + vCode + "_" + nation_num
+        }
+        BXNY_NATION {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXNY_NATION_" + vCode + "_" + nation_num
+        }
+        BXN_COMMINITY {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXN_COMMINITY_" + vCode + "_" + community_num
+        }
+        BXNT_COMMINITY {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXNT_COMMINITY_" + vCode + "_" + community_num
+        }
+        BXNY_COMMINITY {
+            dimension "change"
+            applicationId appId
+            resValue "string", "app_name", var.appname
+            versionName "BXNY_COMMINITY_" + vCode + "_" + community_num
+        }
+    }
+
+    //    // 自定义输出配置
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            //这个修改输出的APK路径
+            if (variant.buildType.name != "debug") {//防止AS无法安装debug包(apk)
+                variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apk")
+            }
+            outputFileName = "${variant.versionName}.apk"
+        }
+    }
+
+    productFlavors.all { flavor ->
+        //BXNT_256_0118_0003
+
+        def currentMode = flavor.versionName.split("_")[3]
+
+        def currentEnvironment = flavor.versionName.split("_")[0]
+        def stValue = ".ceshi"
+        // t == currentEnvironment 以前的判断条件
+        if (currentEnvironment.endsWith("T")) {//判断是否为测试版 是否以T结尾
+            stValue = ".ceshi"
+        }
+        if (currentEnvironment.endsWith("Y")) {//判断是否为预生产 是否以Y结尾
+            stValue = ".yushengchan"
+        }
+        if (currentEnvironment.endsWith("N")) {
+            stValue = ".xianshang"
+        }
+
+        if (currentMode == nation_num) {
+            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
+        } else if (currentMode == community_num) {
+            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.RestaurantFactory", ST_DATA_VALUE: stValue]
+        } else {
+            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
+        }
+
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:$var.supportLibraryVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
