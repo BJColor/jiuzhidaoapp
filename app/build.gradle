@@ -73,6 +73,10 @@ android {
         }
     }
 
+    def stValueT = ".ceshi"
+    def stValueX = ".xianshang"
+    def stValueY = ".yushengchan"
+
     //构建多版本
     flavorDimensions "keep", "change"
     productFlavors {
@@ -108,36 +112,44 @@ android {
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXN_NATION_" + vCode + "_" + nation_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValueX]
         }
         BXNT_NATION {
             dimension "change"
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXNT_NATION_" + vCode + "_" + nation_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValueT]
         }
         BXNY_NATION {
             dimension "change"
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXNY_NATION_" + vCode + "_" + nation_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValueY]
         }
+
+
         BXN_COMMINITY {
             dimension "change"
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXN_COMMINITY_" + vCode + "_" + community_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.CommunityFactory", ST_DATA_VALUE: stValueX]
         }
         BXNT_COMMINITY {
             dimension "change"
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXNT_COMMINITY_" + vCode + "_" + community_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.CommunityFactory", ST_DATA_VALUE: stValueT]
         }
         BXNY_COMMINITY {
             dimension "change"
             applicationId appId
             resValue "string", "app_name", var.appname
             versionName "BXNY_COMMINITY_" + vCode + "_" + community_num
+            manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.CommunityFactory", ST_DATA_VALUE: stValueY]
         }
     }
 
@@ -152,38 +164,41 @@ android {
         }
     }
 
-    productFlavors.all { flavor ->
-        //BXNT_256_0118_0003
-
-        def currentMode = flavor.versionName.split("_")[3]
-
-        def currentEnvironment = flavor.versionName.split("_")[0]
-        def stValue = ".ceshi"
-        // t == currentEnvironment 以前的判断条件
-        if (currentEnvironment.endsWith("T")) {//判断是否为测试版 是否以T结尾
-            stValue = ".ceshi"
-        }
-        if (currentEnvironment.endsWith("Y")) {//判断是否为预生产 是否以Y结尾
-            stValue = ".yushengchan"
-        }
-        if (currentEnvironment.endsWith("N")) {
-            stValue = ".xianshang"
-        }
-
-        if (currentMode == nation_num) {
-            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
-        } else if (currentMode == community_num) {
-            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.RestaurantFactory", ST_DATA_VALUE: stValue]
-        } else {
-            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
-        }
-
-    }
+//    productFlavors.all { flavor ->
+//        //BXNT_256_0118_0003
+//
+//        def currentMode = flavor.versionName.split("_")[3]
+//
+//        def currentEnvironment = flavor.versionName.split("_")[0]
+//        def stValue = ".ceshi"
+//        // t == currentEnvironment 以前的判断条件
+//        if (currentEnvironment.endsWith("T")) {//判断是否为测试版 是否以T结尾
+//            stValue = ".ceshi"
+//        }
+//        if (currentEnvironment.endsWith("Y")) {//判断是否为预生产 是否以Y结尾
+//            stValue = ".yushengchan"
+//        }
+//        if (currentEnvironment.endsWith("N")) {
+//            stValue = ".xianshang"
+//        }
+//
+//        if (currentMode == nation_num) {
+//            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
+//        } else if (currentMode == community_num) {
+//            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.CommunityFactory", ST_DATA_VALUE: stValue]
+//        } else {
+//            flavor.manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.NationFactory", ST_DATA_VALUE: stValue]
+//        }
+//
+//    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:$var.supportLibraryVersion"
+    implementation "com.android.support:design:$var.supportLibraryVersion"
+    implementation "com.android.support:support-vector-drawable:$var.supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$var.supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
