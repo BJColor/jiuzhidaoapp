@@ -3,6 +3,7 @@
     package="com.haier.jiuzhidao">
 
     <application
+        android:name=".application.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        index config start
+
         <meta-data
             android:name="ST_DATA"
             android:value="${ST_DATA_VALUE}" />
@@ -18,7 +19,7 @@
             android:name="INDEX_CONFIG"
             android:value="${INDEX_CONFIG_VALUE}" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.index.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

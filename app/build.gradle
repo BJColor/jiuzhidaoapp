@@ -151,9 +151,7 @@ android {
             versionName "BXNY_COMMINITY_" + vCode + "_" + community_num
             manifestPlaceholders = [INDEX_CONFIG_VALUE: ".activity.index.factorys.CommunityFactory", ST_DATA_VALUE: stValueY]
         }
-    }
-
-    //    // 自定义输出配置
+    }//    // 自定义输出配置
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             //这个修改输出的APK路径
@@ -163,6 +161,9 @@ android {
             outputFileName = "${variant.versionName}.apk"
         }
     }
+
+
+
 
 //    productFlavors.all { flavor ->
 //        //BXNT_256_0118_0003
